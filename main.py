@@ -10,8 +10,18 @@ class Book:
         
 class BookSchema(BaseModel):
     id: int = Field(ge=0, description="The ID of the book")
-    title: str = Field(min_length=3, description="The title of the book", example="The Great Gatsby")
+    title: str = Field(min_length=3, description="The title of the book",)
     author: str = Field(min_length=3, description="The author of the book")
+    
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "id": 1, 
+                "title": "The Great Gatsby", 
+                "author": "F. Scott Fitzgerald"
+            }
+        }
+    }
     
 
 books = [
