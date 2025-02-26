@@ -1,11 +1,23 @@
-from fastapi import FastAPI, HTTPException
-
+from fastapi import FastAPI
+from pydantic import BaseModel
 app = FastAPI()
 
+class Book:
+    def __init__(self, id: int, title: str, author: str):
+        self.id = id
+        self.title = title
+        self.author = author
+        
+class BookSchema(BaseModel):
+    id: int
+    title: str
+    author: str
+    
+
 books = [
-    {"id": 1, "title": "The Great Gatsby", "author": "F. Scott Fitzgerald"},
-    {"id": 2, "title": "To Kill a Mockingbird", "author": "Harper Lee"},
-    {"id": 3, "title": "1984", "author": "George Orwell"},
+    Book(1, "The Great Gatsby", "F. Scott Fitzgerald"),
+    Book(2, "To Kill a Mockingbird", "Harper Lee"),
+    Book(3, "1984", "George Orwell"),
 ]
 
 
@@ -13,36 +25,16 @@ books = [
 def get_books():
     return books
 
-@app.get("/books/{book_id}")
-def get_book(book_id: int):
-    for book in books:
-        if book["id"] == book_id:
-            return book
-    raise HTTPException(status_code=404, detail="Book not found")
-
-@app.get("/books/filter-by-author")
-def get_books_by_author(author: str):
-    return [book for book in books if book["author"] == author]
-
 @app.post("/books")
-def create_book(book: dict):
+def create_book(book_schema: BookSchema):
+    book = Book(**book_schema.model_dump())
     books.append(book)
     return book
 
-@app.put("/books/{book_id}")
-def update_book(book_id: int, book: dict):
-    for i, b in enumerate(books):
-        if b["id"] == book_id:
-            books[i] = book
-            return book
-    raise HTTPException(status_code=404, detail="Book not found")
 
-@app.delete("/books/{book_id}")
-def delete_book(book_id: int):
-    for i, b in enumerate(books):
-        if b["id"] == book_id:
-            books.pop(i)
-            return {"message": "Book deleted"}
-    raise HTTPException(status_code=404, detail="Book not found")
+
+
+
+
 
 
