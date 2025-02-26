@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Query, Path
 from pydantic import BaseModel, Field
 app = FastAPI()
 
@@ -26,25 +26,15 @@ class BookSchema(BaseModel):
 
 books = [
     Book(1, "The Great Gatsby", "F. Scott Fitzgerald"),
-    Book(2, "To Kill a Mockingbird", "Harper Lee"),
-    Book(3, "1984", "George Orwell"),
+    Book(2, "The Great Gatsby", "kingo"),
+    Book(3, "To Kill a Mockingbird", "Harper Lee"),
+    Book(4, "1984", "George Orwell"),
 ]
 
 
-@app.get("/books")
-def get_books():
-    return books
-
-@app.post("/books")
-def create_book(book_schema: BookSchema):
-    book = Book(**book_schema.model_dump())
-    books.append(book)
-    return book
-
-
-
-
-
-
-
-
+@app.get("/books/{book_title}")
+def get_books(book_title: str = Path(min_length=3), book_id: int = Query(gt=0)):
+    for book in books:
+        if book.title == book_title and book.id == book_id:
+            return book
+    raise HTTPException(status_code=404, detail="Book not found")
