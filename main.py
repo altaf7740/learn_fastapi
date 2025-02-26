@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 app = FastAPI()
 
 class Book:
@@ -9,9 +9,9 @@ class Book:
         self.author = author
         
 class BookSchema(BaseModel):
-    id: int
-    title: str
-    author: str
+    id: int = Field(ge=0, description="The ID of the book")
+    title: str = Field(min_length=3, description="The title of the book", example="The Great Gatsby")
+    author: str = Field(min_length=3, description="The author of the book")
     
 
 books = [
