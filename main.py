@@ -38,11 +38,19 @@ def create_book(book: schemas.BookSchema, db: Session = Depends(get_db)):
     db.commit()
     return new_book
 
-@app.delete("/books/{id}")
+@app.delete("/books/{id}", response_model=schemas.BookSchema, status_code=status.HTTP_200_OK)
 def delete_book(id: UUID4, db: Session = Depends(get_db)):
     book = db.query(models.Book).filter(models.Book.id == id.hex).first()
     if book:
         db.delete(book)
         db.commit()
-        return {"message": "Book deleted"}
+        return book
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
+
+@app.put("/books/{id}", response_model=schemas.BookSchema, status_code=status.HTTP_200_OK)
+def update_book(id: UUID4, book: schemas.BookSchema, db: Session = Depends(get_db)):
+    book_dict = book.model_dump()
+    book_dict["id"] = id.hex
+    db.query(models.Book).filter(models.Book.id == id.hex).update(book_dict)
+    db.commit()
+    return book
