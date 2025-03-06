@@ -1,14 +1,13 @@
 from pydantic import BaseModel, Field
 
-class BookSchema(BaseModel):
-    title: str = Field(min_length=3, description="The title of the book",)
-    author: str = Field(min_length=3, description="The author of the book")
-    
-    model_config = {
-        "json_schema_extra": {
-            "example": {
-                "title": "The Great Gatsby", 
-                "author": "F. Scott Fitzgerald"
-            }
-        }
-    }
+class CreateUserRequest(BaseModel):
+    username: str
+    email: str
+    first_name: str
+    last_name: str
+    password: str
+    role: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
