@@ -11,3 +11,9 @@ class CreateUserRequest(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+class CreateTodoRequest(BaseModel):
+    title: str
+    description: str
+    priority: int
+    completed: bool
